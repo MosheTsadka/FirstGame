@@ -8,15 +8,22 @@ public class PlayerHealth : MonoBehaviour
     
     [SerializeField] private TMP_Text healthText;
     
+    private int _currentHealth;
+
+    private void Init()
+    {
+        _currentHealth = health;
+    }
+    
     void Start()
     {
         isAlive = true;
-        healthText.text = "HP: " + health.ToString();
+        healthText.text = "HP: " + _currentHealth.ToString();
     }
     
     void Update()
     {
-        if (health > 0 || !isAlive) return;
+        if (_currentHealth > 0 || !isAlive) return;
         
         isAlive = false;
         GameOver();
@@ -26,19 +33,18 @@ public class PlayerHealth : MonoBehaviour
     {
         if (other.CompareTag("Obstacle"))
         {
-            health -= 1;
+            _currentHealth -= 1;
             SetTextHealth();
         }
     }
 
     private void SetTextHealth()
     {
-        healthText.text = "HP: " + health.ToString();
+        healthText.text = "HP: " + _currentHealth.ToString();
     }
 
     private void GameOver()
     {
-        Debug.Log("Game Over");
-        Time.timeScale = 0;
+        
     }
 }

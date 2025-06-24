@@ -5,9 +5,15 @@ public class SpawnerMovement : MonoBehaviour
 {
     [SerializeField] private float movementSpeed = 3f;
     [SerializeField] private float minMaxX;
+    [SerializeField] private Transform startPos;
     [SerializeField] private Vector3 pos;
 
     private int _dir;
+
+    private void Init()
+    {
+        pos = startPos.position;
+    }
 
     private void Start()
     {

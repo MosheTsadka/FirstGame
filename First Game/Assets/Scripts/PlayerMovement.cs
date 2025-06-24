@@ -8,12 +8,20 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float acceleration = 5f;
     [SerializeField] private float minX = -2.5f;
     [SerializeField] private float maxX = 2.5f;
+    [SerializeField] private Transform startPos;
 
     private float _currentSpeed = 0f;
     private bool _isMobile;
 
+
+    private void Init()
+    {
+        transform.position = startPos.position;
+    }
+
     private void Start()
     {
+        Init();
         _isMobile = Application.isMobilePlatform;
     }
 
