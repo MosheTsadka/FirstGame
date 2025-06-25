@@ -5,6 +5,10 @@ public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance;
+    
+    public event Action OnGameStart;
+    public event Action OnGameOver;
+    public event Action OnGameRestart;
 
     private void Awake()
     {
@@ -18,14 +22,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void RestartGame()
+    private void GameStart()
     {
-        Time.timeScale = 1;
+        OnGameStart?.Invoke();
     }
 
-    public void GameOver()
+    private void GameOver()
     {
-        Debug.Log("Game Over");
-        Time.timeScale = 0;
+        OnGameOver?.Invoke();
+    }
+
+    private void GameRestart()
+    {
+        OnGameRestart?.Invoke();
     }
 }

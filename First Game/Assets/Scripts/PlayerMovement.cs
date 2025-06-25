@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -17,6 +18,13 @@ public class PlayerMovement : MonoBehaviour
     private void Init()
     {
         transform.position = startPos.position;
+    }
+
+    private void Awake()
+    {
+        GameManager.Instance.OnGameStart += Init;
+        GameManager.Instance.OnGameRestart += Init;
+        GameManager.Instance.OnGameOver += Init;
     }
 
     private void Start()
@@ -40,8 +48,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
-        Vector3 newPosition = transform.position + Vector3.right * _currentSpeed * Time.deltaTime;
+        Vector3 newPosition = transform.position + Vector3.right * (_currentSpeed * Time.deltaTime);
         newPosition.x = Mathf.Clamp(newPosition.x, minX, maxX);
         transform.position = newPosition;
+    }
+
+    private void GameOver()
+    {
+        
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 
@@ -14,7 +15,13 @@ public class PlayerHealth : MonoBehaviour
     {
         _currentHealth = health;
     }
-    
+
+    private void Awake()
+    {
+        GameManager.Instance.OnGameStart += Init;
+        GameManager.Instance.OnGameRestart += Init;
+    }
+
     void Start()
     {
         isAlive = true;
@@ -27,6 +34,7 @@ public class PlayerHealth : MonoBehaviour
         
         isAlive = false;
         GameOver();
+        GameManager.Instance.OnGameOver += GameOver;
     }
     
     private void OnTriggerEnter2D(Collider2D other)

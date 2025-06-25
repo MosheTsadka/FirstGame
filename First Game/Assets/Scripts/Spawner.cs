@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
@@ -37,6 +39,12 @@ public class Spawner : MonoBehaviour
             obj.SetActive(false);
             _obstaclesPool.Add(obj);
         }
+    }
+
+    private void Awake()
+    {
+        GameManager.Instance.OnGameStart += Init;
+        GameManager.Instance.OnGameRestart += Init;
     }
 
     void Start()
