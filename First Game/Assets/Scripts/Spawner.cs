@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
-    public static int SpawnCount { get; private set; }
+    /*public static int SpawnCount { get; private set; }
 
     [SerializeField] private GameObject obstacle;
     [SerializeField] private float timeBetweenSpawns;
@@ -43,13 +43,12 @@ public class Spawner : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.Instance.OnGameStart += Init;
-        GameManager.Instance.OnGameRestart += Init;
+        
     }
 
     void Start()
     {
-        Init();
+        
     }
 
     void Update()
@@ -98,29 +97,6 @@ public class Spawner : MonoBehaviour
         spawnRate = timeBetweenSpawns;
     }
 
-
-    /*private void Spawn()
-    {
-        List<int> availableIndexes = new List<int>();
-
-        for (int i = 0; i < _activeSpawnPointCount; i++)
-        {
-            availableIndexes.Add(i);
-        }
-
-        int spawnAmount = Mathf.Min(_obstaclesPerSpawn, availableIndexes.Count);
-
-        for (int i = 0; i < spawnAmount; i++)
-        {
-            int randomIndex = Random.Range(0, availableIndexes.Count);
-            int chosenSpawnPiont = availableIndexes[randomIndex];
-
-            Instantiate(obstacle, spawnPosition[chosenSpawnPiont].position, Quaternion.identity);
-
-            availableIndexes.RemoveAt(randomIndex);
-        }
-    }*/
-
     private GameObject GetPooledObstacle()
     {
         foreach (var obj in _obstaclesPool)
@@ -134,25 +110,168 @@ public class Spawner : MonoBehaviour
 
     private IEnumerator SpawnObstaclesCoroutine()
     {
+        // Create a list of available spawn point indexes
         List<int> availableIndexes = new List<int>();
         for (int i = 0; i < _activeSpawnPointCount; i++)
             availableIndexes.Add(i);
 
+        // Spawn the defined number of obstacles
         for (int i = 0; i < _obstaclesPerSpawn; i++)
+        {
             if (availableIndexes.Count == 0)
                 break;
 
-        int randomIndex = Random.Range(0, availableIndexes.Count);
-        int spawnIndex = availableIndexes[randomIndex];
-        availableIndexes.RemoveAt(randomIndex);
+            int randomIndex = Random.Range(0, availableIndexes.Count);
+            int spawnIndex = availableIndexes[randomIndex];
+            availableIndexes.RemoveAt(randomIndex);
 
-        GameObject obstacleObj = GetPooledObstacle();
-        if (obstacleObj != null)
+            GameObject obstacleObj = GetPooledObstacle();
+            if (obstacleObj != null)
+            {
+                obstacleObj.transform.position = spawnPosition[spawnIndex].position;
+                obstacleObj.SetActive(true);
+            }
+
+            // Wait a bit between spawns for rain-like effect
+            yield return new WaitForSeconds(0.2f);
+        }
+    }*/
+    
+    [SerializeField] private GameObject obstaclePrefab;
+    [SerializeField] private float initialTimeBetweenSpawns = 1f;
+    [SerializeField] private int poolSize = 20;
+    [SerializeField] private Transform[] spawnPositions;
+
+    [Header("Speed Settings")]
+    [SerializeField] private float baseSpeed = 2f;
+    [SerializeField] private float speedMultiplier = 0.6f;
+    [SerializeField] private float maxSpeed = 7f;
+
+    private List<GameObject> _obstaclesPool;
+    private float _spawnTimer;
+    private int _activeSpawnPointCount = 1;
+    private int _obstaclesPerSpawn = 1;
+    private bool _spawning = false;
+    private int _spawnCount = 0;
+    private float _currentTimeBetweenSpawns;
+
+    private void Awake()
+    {
+        GameManager.Instance.OnGameStart += Init;
+        GameManager.Instance.OnGameRestart += Init;
+        GameManager.Instance.OnGameOver += StopSpawning;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= Init;
+        GameManager.Instance.OnGameRestart -= Init;
+        GameManager.Instance.OnGameOver -= StopSpawning;
+    }
+
+    private void Init()
+    {
+        _activeSpawnPointCount = 1;
+        _obstaclesPerSpawn = 1;
+        _spawnCount = 0;
+        _currentTimeBetweenSpawns = initialTimeBetweenSpawns;
+        _spawnTimer = _currentTimeBetweenSpawns;
+
+        if (_obstaclesPool == null)
+            _obstaclesPool = new List<GameObject>();
+        else
         {
-            obstacleObj.transform.position = spawnPosition[spawnIndex].position;
-            obstacleObj.SetActive(true);
+            foreach (var obj in _obstaclesPool)
+                obj.SetActive(false);
+            _obstaclesPool.Clear();
         }
 
-        yield return new WaitForSeconds(0.2f);
+        // Fill the pool
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject obj = Instantiate(obstaclePrefab);
+            obj.SetActive(false);
+            _obstaclesPool.Add(obj);
+        }
+
+        _spawning = true;
+        StopAllCoroutines();
+    }
+
+    private void Update()
+    {
+        if (!_spawning) return;
+
+        _spawnTimer -= Time.deltaTime;
+        if (_spawnTimer <= 0f)
+        {
+            StartCoroutine(SpawnObstaclesCoroutine());
+            _spawnCount++;
+
+            // Example: scaling difficulty (אפשר להרחיב)
+            switch (_spawnCount)
+            {
+                case 15: _currentTimeBetweenSpawns = 0.8f; break;
+                case 30: _currentTimeBetweenSpawns = 0.6f; break;
+                case 50: _currentTimeBetweenSpawns = 0.4f; break;
+                case 20: _obstaclesPerSpawn = 2; break;
+                case 35: _obstaclesPerSpawn = 3; break;
+                case 10: _activeSpawnPointCount = 2; break;
+                case 25: _activeSpawnPointCount = 3; break;
+            }
+
+            _spawnTimer = _currentTimeBetweenSpawns;
+        }
+    }
+
+    private void StopSpawning()
+    {
+        _spawning = false;
+        StopAllCoroutines();
+    }
+
+    private GameObject GetPooledObstacle()
+    {
+        foreach (var obj in _obstaclesPool)
+        {
+            if (!obj.activeInHierarchy)
+                return obj;
+        }
+        return null;
+    }
+
+    private IEnumerator SpawnObstaclesCoroutine()
+    {
+        List<int> availableIndexes = new List<int>();
+        for (int i = 0; i < _activeSpawnPointCount && i < spawnPositions.Length; i++)
+            availableIndexes.Add(i);
+
+        for (int i = 0; i < _obstaclesPerSpawn; i++)
+        {
+            if (availableIndexes.Count == 0) break;
+
+            int randomIndex = Random.Range(0, availableIndexes.Count);
+            int spawnIndex = availableIndexes[randomIndex];
+            availableIndexes.RemoveAt(randomIndex);
+
+            GameObject obstacleObj = GetPooledObstacle();
+            if (obstacleObj != null)
+            {
+                obstacleObj.transform.position = spawnPositions[spawnIndex].position;
+                // *** Speed is calculated ONCE per spawn, not updated later ***
+                float calculatedSpeed = baseSpeed + Mathf.Log(1 + _spawnCount) * speedMultiplier;
+                calculatedSpeed = Mathf.Min(calculatedSpeed, maxSpeed);
+
+                var obstacleScript = obstacleObj.GetComponent<ObstacleBehaviour>();
+                if (obstacleScript != null)
+                {
+                    obstacleScript.SetSpeed(calculatedSpeed);
+                }
+
+                obstacleObj.SetActive(true);
+            }
+
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 }

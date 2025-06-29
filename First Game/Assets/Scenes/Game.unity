@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 61063873}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -320,7 +320,7 @@ GameObject:
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
-  m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -336,14 +336,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb2cfa9f334c2f0429e801f947736a34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obstacle: {fileID: 7182575700868773161, guid: 54552412e0b91254ea2c9d207c796081, type: 3}
-  timeBetweenSpawns: 1
-  spawnRate: 1
-  spawnPosition:
+  obstaclePrefab: {fileID: 7182575700868773161, guid: 54552412e0b91254ea2c9d207c796081, type: 3}
+  initialTimeBetweenSpawns: 1
+  poolSize: 20
+  spawnPositions:
   - {fileID: 516726596}
   - {fileID: 322353742}
   - {fileID: 976950927}
-  poolSize: 30
+  baseSpeed: 2
+  speedMultiplier: 0.2
+  maxSpeed: 7
 --- !u!4 &189075463
 Transform:
   m_ObjectHideFlags: 0
@@ -1352,9 +1354,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
+  - {fileID: 987899118}
   - {fileID: 61063869}
   - {fileID: 1742569096}
   - {fileID: 1038064004}
   - {fileID: 568146593}
   - {fileID: 189075463}
-  - {fileID: 987899118}

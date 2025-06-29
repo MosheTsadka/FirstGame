@@ -20,11 +20,16 @@ public class PlayerMovement : MonoBehaviour
         transform.position = startPos.position;
     }
 
-    private void Awake()
+    private void OnEnable()
     {
         GameManager.Instance.OnGameStart += Init;
         GameManager.Instance.OnGameRestart += Init;
-        GameManager.Instance.OnGameOver += Init;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= Init;
+        GameManager.Instance.OnGameRestart -= Init;
     }
 
     private void Start()
@@ -51,10 +56,5 @@ public class PlayerMovement : MonoBehaviour
         Vector3 newPosition = transform.position + Vector3.right * (_currentSpeed * Time.deltaTime);
         newPosition.x = Mathf.Clamp(newPosition.x, minX, maxX);
         transform.position = newPosition;
-    }
-
-    private void GameOver()
-    {
-        
     }
 }

@@ -13,19 +13,25 @@ public class SpawnerMovement : MonoBehaviour
     private void Init()
     {
         pos = startPos.position;
+        _dir = 1;
     }
 
-    private void Awake()
+    private void OnEnable()
     {
         GameManager.Instance.OnGameStart += Init;
         GameManager.Instance.OnGameRestart += Init;
     }
 
-    private void Start()
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= Init;
+        GameManager.Instance.OnGameRestart -= Init;
+    }
+    /*private void Start()
     {
         Init();
         _dir = 1;
-    }
+    }*/
 
     void Update()
     {

@@ -10,30 +10,34 @@ public class GameManager : MonoBehaviour
     public event Action OnGameOver;
     public event Action OnGameRestart;
 
+    private bool _isGameActive = false;
+
     private void Awake()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
-    private void GameStart()
+    private void Start()
     {
+        StartGame();
+    }
+
+    public void StartGame()
+    {
+        _isGameActive = true;
         OnGameStart?.Invoke();
     }
 
-    private void GameOver()
+    public void GameOver()
     {
+        _isGameActive = false;
         OnGameOver?.Invoke();
     }
 
-    private void GameRestart()
+    public void RestartGame()
     {
+        _isGameActive = true;
         OnGameRestart?.Invoke();
     }
 }

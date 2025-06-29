@@ -3,17 +3,22 @@ using UnityEngine;
 
 public class ObstacleBehaviour : MonoBehaviour
 {
-    [SerializeField] private float baseSpeed;
-    [SerializeField] private float multiplierSpeed;
+    /*[SerializeField] private float baseSpeed;
+    [SerializeField] private float multiplierSpeed;*/
+    [SerializeField] private int damage;
     private float _speed;
 
-    private void OnEnable()
+    /*private void OnEnable()
     {
         _speed = baseSpeed + (Spawner.SpawnCount * multiplierSpeed);
+    }*/
+
+    public void SetSpeed(float newSpeed)
+    {
+        _speed = newSpeed;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Vector3 movement = Vector3.down * (_speed * Time.deltaTime);
         transform.position += movement;
@@ -21,9 +26,20 @@ public class ObstacleBehaviour : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("DestroyObstacle")) return;
+        if (other.CompareTag("Player"))
+        {
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage);
+            }
+        }
         
-        ScoreManager.Instance.AddScore(1);
-        gameObject.SetActive(false);
+        else if (other.CompareTag("DestroyObstacle"))
+        {
+            ScoreManager.Instance.AddScore(1);
+            gameObject.SetActive(false);
+        }
     }
 }
