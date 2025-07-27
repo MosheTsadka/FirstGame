@@ -6,7 +6,7 @@ public class ObstacleBehaviour : MonoBehaviour
     /*[SerializeField] private float baseSpeed;
     [SerializeField] private float multiplierSpeed;*/
     [SerializeField] private int damage;
-    private float _speed;
+    [SerializeField] private float _speed;
 
     /*private void OnEnable()
     {

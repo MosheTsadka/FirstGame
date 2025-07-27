@@ -216,8 +216,8 @@ public class Spawner : MonoBehaviour
                 case 50: _currentTimeBetweenSpawns = 0.4f; break;
                 case 20: _obstaclesPerSpawn = 2; break;
                 case 35: _obstaclesPerSpawn = 3; break;
-                case 10: _activeSpawnPointCount = 2; break;
-                case 25: _activeSpawnPointCount = 3; break;
+                case 14: _activeSpawnPointCount = 2; break;
+                case 29: _activeSpawnPointCount = 3; break;
             }
 
             _spawnTimer = _currentTimeBetweenSpawns;
