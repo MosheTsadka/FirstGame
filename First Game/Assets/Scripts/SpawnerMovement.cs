@@ -18,14 +18,24 @@ public class SpawnerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.Instance.OnGameStart += Init;
-        GameManager.Instance.OnGameRestart += Init;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStart += Init;
+            GameManager.Instance.OnGameRestart += Init;
+        }
+        else
+        {
+            Debug.LogWarning("SpawnerMovement enabled before GameManager was initialized.");
+        }
     }
 
     private void OnDisable()
     {
-        GameManager.Instance.OnGameStart -= Init;
-        GameManager.Instance.OnGameRestart -= Init;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStart -= Init;
+            GameManager.Instance.OnGameRestart -= Init;
+        }
     }
     /*private void Start()
     {

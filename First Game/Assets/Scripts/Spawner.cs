@@ -157,16 +157,26 @@ public class Spawner : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.Instance.OnGameStart += Init;
-        GameManager.Instance.OnGameRestart += Init;
-        GameManager.Instance.OnGameOver += StopSpawning;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStart += Init;
+            GameManager.Instance.OnGameRestart += Init;
+            GameManager.Instance.OnGameOver += StopSpawning;
+        }
+        else
+        {
+            Debug.LogWarning("Spawner awakened before GameManager was initialized.");
+        }
     }
 
     private void OnDisable()
     {
-        GameManager.Instance.OnGameStart -= Init;
-        GameManager.Instance.OnGameRestart -= Init;
-        GameManager.Instance.OnGameOver -= StopSpawning;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStart -= Init;
+            GameManager.Instance.OnGameRestart -= Init;
+            GameManager.Instance.OnGameOver -= StopSpawning;
+        }
     }
 
     private void Init()

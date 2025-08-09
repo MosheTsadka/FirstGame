@@ -22,16 +22,26 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.Instance.OnGameStart += Init;
-        GameManager.Instance.OnGameRestart += Init;
-        
-        Debug.Log("GameManager is: " + GameManager.Instance.enabled);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStart += Init;
+            GameManager.Instance.OnGameRestart += Init;
+
+            Debug.Log("GameManager is: " + GameManager.Instance.enabled);
+        }
+        else
+        {
+            Debug.LogWarning("PlayerHealth enabled before GameManager was initialized.");
+        }
     }
 
     private void OnDisable()
     {
-        GameManager.Instance.OnGameStart -= Init;
-        GameManager.Instance.OnGameRestart -= Init;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStart -= Init;
+            GameManager.Instance.OnGameRestart -= Init;
+        }
     }
 
     public void TakeDamage(int damage)
