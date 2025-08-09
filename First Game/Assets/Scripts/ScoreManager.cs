@@ -9,19 +9,32 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private int score;
     [SerializeField] private TMP_Text scoreText;
 
-    private void OnEnable()
+    private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
 
-        GameManager.Instance.OnGameStart += Init;
-        GameManager.Instance.OnGameRestart += Init;
+    private void Start()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStart += Init;
+            GameManager.Instance.OnGameRestart += Init;
+        }
+        else
+        {
+            Debug.LogWarning("GameManager instance not found when ScoreManager started.");
+        }
     }
 
     private void OnDisable()
     {
-        GameManager.Instance.OnGameStart -= Init;
-        GameManager.Instance.OnGameRestart -= Init;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStart -= Init;
+            GameManager.Instance.OnGameRestart -= Init;
+        }
     }
 
     private void Init()
